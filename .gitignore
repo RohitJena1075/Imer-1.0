@@ -1,0 +1,32 @@
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore logs and build files
+*.log
+*.zip
+*.tar.gz
+
+# Ignore large model folders
+bert_model/
+*.joblib
+
+# Ignore Streamlit and OS configs
+.streamlit/secrets.toml
+.vscode/
+.DS_Store
+
+# Inside ai_emotion_bot/.gitignore
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.DS_Store
+*.db
+
