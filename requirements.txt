@@ -5,7 +5,7 @@ pydeck==0.9.1
 fastapi
 
 # API and Web Requests
-requests==2.31.0
+requests
 httpx==0.28.1
 
 # Hugging Face & Cohere (if calling APIs externally)
