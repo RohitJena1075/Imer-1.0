@@ -7,7 +7,7 @@
 
 Welcome to **Imer-1.0**, an advanced emotion-aware AI chatbot that adapts to your mood and persona preferences. It supports **custom personalities**, intelligent memory, engaging GIF and quote suggestions, and more — all through a beautiful, animated Streamlit interface.
 
-🌐 **Live Demo**: [Imer on Hugging Face](https://ro08hi11t23-imer-1-0.hf.space)
+🌐 **Live Demo**: [Imer-1.0](https://ro08hi11t23-imer-1-0.hf.space)
 
 ---
 
