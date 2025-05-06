@@ -17,7 +17,6 @@ def generate_reply(message, emotion, personality):
     response = co.chat(
     model="command-r",  # ✅ supported model
     message=full_message,
-    max_tokens=150
 )
 
 
