@@ -18,9 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to Imer Chatbot! Use POST /chat with JSON data."}
+# @app.get("/")
+# def read_root():
+#     return {"message": "Welcome to Imer Chatbot! Use POST /chat with JSON data."}
 
 @app.post("/chat")
 async def chat(request: Request):
