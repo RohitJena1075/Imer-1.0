@@ -48,7 +48,7 @@ st.markdown("""
 
 
 # 🧠 Backend API URL
-API_URL = "http://localhost:8000/chat"
+API_URL = "https://imer-1-0.onrender.com/chat"
 
 # 🧾 Session History
 if "history" not in st.session_state:
