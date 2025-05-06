@@ -1,20 +1,17 @@
-import requests
 import random
+import urllib.parse
+import requests
 
 def get_music_link(emotion):
-    query = f"{emotion} mood"
-    url = f"https://api.deezer.com/search?q={query}"
     try:
-        response = requests.get(url)
-        data = response.json()
-        if "data" in data and data["data"]:
-            track = random.choice(data["data"])
-            return track["link"]  # Deezer track link
+        query = f"{emotion} mood music"
+        encoded_query = urllib.parse.quote(query)
+        return f"https://www.youtube.com/results?search_query={encoded_query}"
     except Exception as e:
-        print(f"Deezer API error: {e}")
+        print(f"Music suggestion error: {e}")
     
-    # fallback if Deezer fails
-    return "https://www.deezer.com/en/"
+    # Fallback if even that fails
+    return "https://www.youtube.com/"
 
 def get_quote():
     try:
