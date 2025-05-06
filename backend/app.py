@@ -7,6 +7,10 @@ from backend.memory import save_chat_to_json
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to Imer Chatbot! Use POST /chat with JSON data."}
+
 @app.post("/chat")
 async def chat(request: Request):
     try:
