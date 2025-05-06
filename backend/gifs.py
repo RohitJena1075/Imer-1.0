@@ -1,13 +1,7 @@
 import requests
 import random
 from backend.utils import load_env
-import os
-def load_env():
-    return {
-        "giphy_key": os.getenv("GIPHY_API_KEY"),
-        # add more keys if needed
-    }
-    
+import os    
 GIPHY_API_KEY = load_env()["giphy_key"]
 
 def fetch_gif(emotion):
