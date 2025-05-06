@@ -4,7 +4,7 @@ from backend.utils import load_env
 import os
 def load_env():
     return {
-        "giphy_key": os.getenv("GIPHY_KEY"),
+        "giphy_key": os.getenv("GIPHY_API_KEY"),
         # add more keys if needed
     }
     
