@@ -15,3 +15,15 @@ def get_music_link(emotion):
     
     # fallback if Deezer fails
     return "https://www.deezer.com/en/"
+
+def get_quote():
+    try:
+        res = requests.get("https://zenquotes.io/api/random")
+        if res.status_code == 200:
+            quote_data = res.json()
+            return f'{quote_data[0]["q"]} — {quote_data[0]["a"]}'
+        else:
+            return "Stay positive and keep going!"
+    except Exception as e:
+        return "Stay positive!"
+
