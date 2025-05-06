@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+
 from backend.chatbot import generate_reply
 from backend.emotions import detect_emotion
 from backend.gifs import fetch_gif
@@ -6,6 +8,15 @@ from backend.suggestions import get_quote, get_music_link
 from backend.memory import save_chat_to_json
 
 app = FastAPI()
+
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://SoulGainer1075--Imer-1-0.hf.space"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -36,4 +47,5 @@ async def chat(request: Request):
     except Exception as e:
         print(f"API Error: {e}")  # Logs to terminal
         return {"error": str(e)}
+
         
