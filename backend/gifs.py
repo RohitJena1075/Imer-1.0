@@ -1,6 +1,7 @@
 import requests
 import random
 from backend.utils import load_env
+import os
 
 GIPHY_API_KEY = load_env()["giphy_key"]
 
