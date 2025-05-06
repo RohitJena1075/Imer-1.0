@@ -118,7 +118,7 @@ streamlit run app.py
 
 ### Frontend
 - Deployed on [Hugging Face Spaces](https://huggingface.co/spaces)
-- URL: [Imer Frontend](https://ro08hi11t23-imer-1-0.hf.space)
+- URL: [Imer-1.0](https://ro08hi11t23-imer-1-0.hf.space)
 
 ### Backend
 - Deploy `backend/app.py` on [Render](https://render.com/)
