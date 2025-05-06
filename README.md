@@ -61,9 +61,9 @@ Imer-1.0/
 ## ⚙️ Tech Stack
 
 - **Frontend**: Streamlit (deployed on Hugging Face Spaces)
-- **Backend**: Python + FastAPI/Flask (deployed on Render)
-- **Model**: Emotion classification, response generation (using Cohere/OpenAI)
-- **Persistence**: SQLite or JSON-based memory
+- **Backend**: Python + FastAPI/Flask  (deployed on Render)
+- **Model**: Emotion classification, response generation (using Cohere API + BERT_MODEL)
+- **Persistence**: JSON-based memory
 
 ---
 
@@ -107,10 +107,6 @@ pip install -r requirements.txt
 ```
 
 3. Run the app:
-
-```bash
-streamlit run app.py
-```
 
 ---
 
