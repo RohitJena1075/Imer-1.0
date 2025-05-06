@@ -6,111 +6,139 @@ import requests
 import random
 from datetime import datetime
 
+# Backend API
+API_URL = "https://imer-1-0.onrender.com/chat"
+
+# Welcome GIFs
 WELCOME_GIFS = [
     "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXhmb3F4M29zbWFpcmptc3V0dmhlN2RydzJleGQ5bjE3M3p1d2c1ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1ZVBVvY5kS7qUHhqI2/giphy.gif",
     "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExY21wemt1aGNuOGsxN3NiMzM0NnQwY3FiZjgzaXU5cXR5MHQyODFyMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Rsp9jLIy0VZOKlZziw/giphy.gif",
-    "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXZsbXpjMHg2dmZpc21wbXFtdGtjMXgwZDNuZzFpdTN3YmV0N210MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XD9o33QG9BoMis7iM4/giphy.gif",
-    "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExd21yamxsYTcxeWZpM29ocTE2cmd2c2l3bTgzb3hvYmI5cHhiNmd6NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0MYC0LajbaPoEADu/giphy.gif",
-    "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWxvMGNzYTFhb3J1anJkcGUzaHVxdmFhNGs3N3FmNjR0MDFjcDV6ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/n3jh2fO3GB4aaK6tAd/giphy.gif",
-    "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHN4cTByeTZhNWpqeXh2cWc3d2E3MnZ5NnoyZXpoZWRkMmZtOHpuNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l4JyOCNEfXvVYEqB2/giphy.gif",
-    "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWM2ajF2MXU5NnEwOWhmMnB5azhxMnlybm16ZWp1aHEyOW5vMTQ3MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ggtpYV17RP9lTbc542/giphy.gif"
+    "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXZsbXpjMHg2dmZpc21wbXFtdGtjMXgwZDNuZzFpdTN3YmV0N210MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XD9o33QG9BoMis7iM4/giphy.gif"
 ]
 
-# 🎨 Streamlit Page Configuration
+# Page config
 st.set_page_config(page_title="AI Companion", layout="wide")
+
+# Inject CSS for sidebar styling and smooth connect box
 st.markdown("""
     <style>
-    [data-testid="chat-message-avatar"] img {
-        height: 70px !important;
-        width: 70px !important;
-        object-fit: cover;
-        border-radius: 50%;
+    [data-testid="stSidebar"] {
+        background-color: #1e1e2f;
+        padding: 25px;
     }
-    [data-testid="chat-message"] div:has(img[src*="S60CrN9iMxFlyp7uM8"]) {
-        background-color: #e0f7ff;
-        padding: 30px 25px !important;
-        border-radius: 20px;
-        font-size: 1.2rem;
-        line-height: 1.6;
+    .persona-section {
+        background: #2c2c3f;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    .persona-section h4 {
+        text-align: center;
+        color: #f4f4f4;
+        font-size: 18px;
         margin-bottom: 10px;
-        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
     }
-    [data-testid="chat-message"] div:has(img[src*="wlHIxNluDY02O4x3a4"]) {
-        font-size: 1.1rem;
+    .persona-section p {
+        color: #ccc;
+        font-size: 13px;
         line-height: 1.5;
-        padding: 25px !important;
+        margin-left: 8px;
+    }
+    .connect-links {
+        background-color: #33384e;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin-top: 10px;
+        font-size: 15px;
+        color: white;
+    }
+    .connect-links a {
+        color: #91e0ff;
+        text-decoration: none;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 🧠 Backend API URL
-API_URL = "https://imer-1-0.onrender.com/chat"
-
-# 🧾 Session History
+# Session
 if "history" not in st.session_state:
     st.session_state["history"] = []
+if "show_connect" not in st.session_state:
+    st.session_state["show_connect"] = False
 
-# 🎭 Sidebar UI
+# Sidebar
 with st.sidebar:
-    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXZxcnVlNG52aXIwNjhzYTI3Z3YwdzI1azg4dXdxNDZibDgwcGdsdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/S60CrN9iMxFlyp7uM8/giphy.gif", caption="Imer-1.0", use_container_width=True)
-    st.header("🧠 Bot Personality")
-    personality = st.radio("Choose one:", ["🤗 Friendly", "😂 Funny", "🧐 Serious"], index=0)
+    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXZxcnVlNG52aXIwNjhzYTI3Z3YwdzI1azg4dXdxNDZibDgwcGdsdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/S60CrN9iMxFlyp7uM8/giphy.gif", use_container_width=True)
+    st.markdown("<h3 style='text-align: center; color: white;'>Imer-1.0</h3>", unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown("""
+        <div class='persona-section'>
+            <h4>🧠 Choose your AI Persona</h4>
+            <p>🤗 <b>Friendly</b> – A cozy and warm chat.<br>
+            😂 <b>Funny</b> – Banter and jokes coming your way!<br>
+            🧐 <b>Serious</b> – Straight talk, no nonsense.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        personality = st.radio("", ["🤗 Friendly", "😂 Funny", "🧐 Serious"], index=0)
 
     if st.button("🗑️ Clear Chat"):
         st.session_state["history"] = []
         try:
             st.rerun()
-        except RuntimeError:
+        except:
             pass
 
+    st.markdown("<br>", unsafe_allow_html=True)  # Space between buttons
+
+    if st.button("🌐 Connect With Me"):
+        st.session_state["show_connect"] = not st.session_state["show_connect"]
+
+    if st.session_state["show_connect"]:
+        st.markdown("""
+        <div class="connect-links">
+            <a href="https://github.com/RohitJena1075" target="_blank">🐙 GitHub</a><br>
+            <a href="https://www.linkedin.com/in/rohitjena2526" target="_blank">💼 LinkedIn</a><br>
+            📧 rohit.jena2004@gmail.com
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("""
-    <hr><p style='font-size: 14px; color: #555;'>Choose your AI persona!<br>- Friendly: Feel the warmth of a cozy chat.<br>- Funny: Let the banter begin!<br>- Serious: Straight to business, no fluff.</p><hr>
-    <small>✨ Created with ❤️ by ro08hi11t23</small>
+    <hr><p style='font-size: 14px; color: #ccc;'>✨ Created with ❤️ by ro08hi11t23</p>
     """, unsafe_allow_html=True)
 
-# 💬 Chat Input
+# Chat input
 user_input = st.chat_input("Type something to your AI friend...")
 
-# 🚀 Handle API Call
+# Handle API Call
 if user_input and user_input.strip():
-    with st.spinner("🤖 Thinking..."):
+    with st.spinner("🤖 Evaluating your thoughts..."):
         try:
             response = requests.post(API_URL, json={
                 "message": user_input,
                 "personality": personality.replace("🤗 ", "").replace("😂 ", "").replace("🧐 ", "")
             })
-
             if response.status_code == 200:
                 data = response.json()
-                bot_reply = data.get("reply", "Hmm... I’m not sure how to respond.")
-                emotion = data.get("emotion", "neutral")
-                gif_url = data.get("gif", "")
-                quote = data.get("quote", "")
-                music = data.get("music", "")
-                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                persona_icon = personality.split(" ")[0]
-
                 st.session_state["history"].append({
                     "user": user_input,
-                    "bot": bot_reply,
-                    "emotion": emotion,
-                    "gif": gif_url,
-                    "quote": quote,
-                    "music": music,
-                    "timestamp": timestamp,
-                    "persona_icon": persona_icon
+                    "bot": data.get("reply", "Hmm... I’m not sure how to respond."),
+                    "emotion": data.get("emotion", "neutral"),
+                    "gif": data.get("gif", ""),
+                    "quote": data.get("quote", ""),
+                    "music": data.get("music", ""),
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "persona_icon": personality.split(" ")[0]
                 })
             else:
-                st.error("Error from backend: " + response.text)
+                st.error(f"Backend error: {response.text}")
         except Exception as e:
-            st.error(f"Request failed: {e}")
+            st.error(f"Connection failed: {e}")
 
-# 👋 Initial Welcome Message
+# Initial welcome message
 if not st.session_state["history"]:
-    welcome_gif = random.choice(WELCOME_GIFS)
-    st.markdown("## 👋 Welcome to your AI Companion!")
+    st.markdown("## 👋 Welcome to Folks I am Imer!")
     st.markdown("Start chatting to see how I react to your emotions. 🎭")
-    st.image(welcome_gif, use_container_width=True)
+    st.image(random.choice(WELCOME_GIFS), use_container_width=True)
     st.markdown("""
         <div style='text-align: center; font-size: 16px; color: grey;'>
         Try saying something like:<br>
@@ -118,7 +146,7 @@ if not st.session_state["history"]:
         </div>
     """, unsafe_allow_html=True)
 
-# 🧾 Chat History Display
+# Chat history
 for msg in st.session_state["history"]:
     with st.chat_message("user", avatar="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTNsZDV5NWh1ajM2d3R3OW45bHJkc3llaDl6NWFoMXd5MHBiYXM3byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wlHIxNluDY02O4x3a4/giphy.gif"):
         st.markdown(msg["user"])
@@ -131,6 +159,6 @@ for msg in st.session_state["history"]:
             with st.expander("🎞️ Reaction GIF"):
                 st.image(msg["gif"], use_container_width=True)
         if msg["music"]:
-            st.markdown(f"🎵 [**Vibe with Music** ]({msg['music']})", unsafe_allow_html=True)
+            st.markdown(f"🎧 <b>Feeling the vibe?</b> <a href='{msg['music']}' target='_blank'>Click here to listen!</a>", unsafe_allow_html=True)
         if msg["quote"]:
             st.success(f"💡 {msg['quote']}")
