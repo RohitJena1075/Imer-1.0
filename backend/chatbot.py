@@ -1,6 +1,11 @@
 import cohere
 from backend.utils import load_env
-
+import os
+def load_env():
+    return {
+        "cohere_key": os.getenv("COHERE_API_KEY"),
+        # add more keys if needed
+    }
 cohere_key = load_env()["cohere_key"]
 co = cohere.Client(cohere_key)
 
