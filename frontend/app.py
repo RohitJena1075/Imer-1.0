@@ -1,25 +1,34 @@
 import os
-os.environ["HOME"] = "/tmp"  # Make ~/.streamlit writable
-
 import streamlit as st
 import requests
 import random
 from datetime import datetime
 
-# Backend API
+# Temporary HOME for streamlit file saving
+os.environ["HOME"] = "/tmp"
+
+# Backend API URL
 API_URL = "https://imer-1-0.onrender.com/chat"
 
 # Welcome GIFs
 WELCOME_GIFS = [
-    "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXhmb3F4M29zbWFpcmptc3V0dmhlN2RydzJleGQ5bjE3M3p1d2c1ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1ZVBVvY5kS7qUHhqI2/giphy.gif",
-    "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExY21wemt1aGNuOGsxN3NiMzM0NnQwY3FiZjgzaXU5cXR5MHQyODFyMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Rsp9jLIy0VZOKlZziw/giphy.gif",
-    "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXZsbXpjMHg2dmZpc21wbXFtdGtjMXgwZDNuZzFpdTN3YmV0N210MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XD9o33QG9BoMis7iM4/giphy.gif"
+    "https://media2.giphy.com/media/1ZVBVvY5kS7qUHhqI2/giphy.gif",
+    "https://media3.giphy.com/media/Rsp9jLIy0VZOKlZziw/giphy.gif",
+    "https://media2.giphy.com/media/l1J9urAfGd3grKV6E/giphy.gif",
+    "https://media.giphy.com/media/3o7aDgf134NzaaHI8o/giphy.gif",
+    "https://media.giphy.com/media/l0IxYD16t9PDEdg9q/giphy.gif",
+    "https://media.giphy.com/media/YxIXSFbuRDFxBHIs0J/giphy.gif",
+    "https://media.giphy.com/media/HMpD1QeiWf61PBE3AN/giphy.gif",
+    "https://media.giphy.com/media/pOA0MOyUTzEzj8qcXL/giphy.gif",
+    "https://media.giphy.com/media/YsAU6aLdgRIGFgWuT0/giphy.gif",
+    "https://media.giphy.com/media/afOQtYF2DC7cLrPqVM/giphy.gif",
+    "https://media4.giphy.com/media/XD9o33QG9BoMis7iM4/giphy.gif"
 ]
 
-# Page config
-st.set_page_config(page_title="AI Companion", layout="wide")
+# Streamlit page configuration
+st.set_page_config(page_title="Imer-1.0", layout="wide")
 
-# Inject CSS for sidebar styling and smooth connect box
+# Custom CSS
 st.markdown("""
     <style>
     [data-testid="stSidebar"] {
@@ -59,15 +68,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Session
+# Initialize session state
 if "history" not in st.session_state:
     st.session_state["history"] = []
 if "show_connect" not in st.session_state:
     st.session_state["show_connect"] = False
 
-# Sidebar
+# Sidebar UI
 with st.sidebar:
-    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXZxcnVlNG52aXIwNjhzYTI3Z3YwdzI1azg4dXdxNDZibDgwcGdsdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/S60CrN9iMxFlyp7uM8/giphy.gif", use_container_width=True)
+    st.image("https://media1.giphy.com/media/S60CrN9iMxFlyp7uM8/giphy.gif", use_container_width=True)
     st.markdown("<h3 style='text-align: center; color: white;'>Imer-1.0</h3>", unsafe_allow_html=True)
 
     with st.container():
@@ -79,16 +88,13 @@ with st.sidebar:
             🧐 <b>Serious</b> – Straight talk, no nonsense.</p>
         </div>
         """, unsafe_allow_html=True)
-        personality = st.radio("", ["🤗 Friendly", "😂 Funny", "🧐 Serious"], index=0)
+        personality = st.radio("AI Personality", ["🤗 Friendly", "😂 Funny", "🧐 Serious"], index=0, label_visibility="collapsed")
 
     if st.button("🗑️ Clear Chat"):
         st.session_state["history"] = []
-        try:
-            st.rerun()
-        except:
-            pass
+        st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)  # Space between buttons
+    st.markdown("<br>", unsafe_allow_html=True)
 
     if st.button("🌐 Connect With Me"):
         st.session_state["show_connect"] = not st.session_state["show_connect"]
@@ -109,13 +115,13 @@ with st.sidebar:
 # Chat input
 user_input = st.chat_input("Type something to your AI friend...")
 
-# Handle API Call
+# API Request
 if user_input and user_input.strip():
     with st.spinner("🤖 Evaluating your thoughts..."):
         try:
             response = requests.post(API_URL, json={
                 "message": user_input,
-                "personality": personality.replace("🤗 ", "").replace("😂 ", "").replace("🧐 ", "")
+                "personality": personality.split(" ")[1]  # Remove emoji
             })
             if response.status_code == 200:
                 data = response.json()
@@ -130,11 +136,11 @@ if user_input and user_input.strip():
                     "persona_icon": personality.split(" ")[0]
                 })
             else:
-                st.error(f"Backend error: {response.text}")
+                st.error(f"Backend error: {response.status_code} - {response.text}")
         except Exception as e:
             st.error(f"Connection failed: {e}")
 
-# Initial welcome message
+# Initial welcome
 if not st.session_state["history"]:
     st.markdown("## 👋 Welcome to Folks I am Imer!")
     st.markdown("Start chatting to see how I react to your emotions. 🎭")
@@ -146,13 +152,13 @@ if not st.session_state["history"]:
         </div>
     """, unsafe_allow_html=True)
 
-# Chat history
+# Display chat history
 for msg in st.session_state["history"]:
-    with st.chat_message("user", avatar="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTNsZDV5NWh1ajM2d3R3OW45bHJkc3llaDl6NWFoMXd5MHBiYXM3byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wlHIxNluDY02O4x3a4/giphy.gif"):
+    with st.chat_message("user", avatar="https://media1.giphy.com/media/wlHIxNluDY02O4x3a4/giphy.gif"):
         st.markdown(msg["user"])
         st.caption(f"🕒 {msg['timestamp']}")
 
-    with st.chat_message("assistant", avatar="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXZxcnVlNG52aXIwNjhzYTI3Z3YwdzI1azg4dXdxNDZibDgwcGdsdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/S60CrN9iMxFlyp7uM8/giphy.gif"):
+    with st.chat_message("assistant", avatar="https://media1.giphy.com/media/S60CrN9iMxFlyp7uM8/giphy.gif"):
         st.markdown(f"`{msg['persona_icon']} Emotion: {msg['emotion']}`\n\n{msg['bot']}")
         st.caption(f"🕒 {msg['timestamp']}")
         if msg["gif"]:
